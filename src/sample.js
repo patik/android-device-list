@@ -1,4 +1,7 @@
-export const rawDeviceList = `,,AD681H,Smartfren Andromax AD681H
+export const sampleLogs =
+    '2019-10-15,org.internations,zerofltespr,0,0,0,0,0,0,34,0,0,0\n2019-10-15,org.internations,zerofltetmo,0,0,0,0,0,0,48,1,0,0\n2019-10-15,org.internations,zeroflteusc,0,0,0,0,0,0,2,0,0,0\n2019-10-15,org.internations,zerofltevzw,0,0,0,0,0,0,81,0,0,0\n2019-10-15,org.internations,zerolte,4,0,0,0,3,2,996,4,8,1\n2019-10-15,org.internations,zerolteatt,0,0,0,0,0,0,22,0,0,0\n2019-10-15,org.internations,zeroltebmc,0,0,0,0,0,0,22,0,0,0\n2019-10-15,org.internations,zeroltechn,0,0,0,0,0,0,19,0,0,0\n2019-10-15,org.internations,zeroltektt,0,0,0,0,0,0,1,0,0,0\n2019-10-15,org.internations,zeroltelgt,0,0,0,0,0,0,5,0,0,0\n2019-10-15,org.internations,zerolteskt,0,0,0,0,0,0,8,0,0,0\n2019-10-15,org.internations,zeroltespr,0,0,0,0,0,0,13,0,0,0\n2019-10-15,org.internations,zeroltetmo,0,0,0,0,0,0,34,1,0,0\n2019-10-15,org.internations,zerolteusc,0,0,0,0,0,0,1,0,0,0\n2019-10-15,org.internations,zeroltevzw,0,0,0,0,0,0,21,0,0,0\n2019-10-15,org.internations,zippo,0,0,0,0,0,0,2,0,0,0\n2019-10-15,org.internations,zoom_fdd,0,0,0,0,0,0,2,0,0,0'
+
+export const sampleDeviceList = `,,AD681H,Smartfren Andromax AD681H
 ,,FJL21,FJL21
 ,,hws7721g,MediaPad 7 Youth 2
 1&1,1&1 Puck,diw362_1u1,DIW362P 1U1

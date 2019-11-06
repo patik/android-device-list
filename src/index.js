@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { rawDeviceList } from './deviceMap'
-import placeholderData from './placeholderData'
+import { sampleLogs, sampleDeviceList } from './sample'
 
 import './styles.css'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
@@ -23,8 +22,8 @@ const getUniqueElements = arr => {
 
 class App extends React.PureComponent {
     state = {
-        data: placeholderData,
-        devices: rawDeviceList,
+        data: sampleLogs,
+        devices: sampleDeviceList,
     }
 
     onLogsChange = evt => {

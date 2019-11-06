@@ -194,10 +194,30 @@ class App extends React.PureComponent {
 
         return (
             <div className="App">
-                <p>
-                    <textarea onChange={this.onLogsChange} defaultValue={this.state.data} />
-                    <textarea onChange={this.onDevicesChange} defaultValue={this.state.devices} />
-                </p>
+                <h1>Top Android Devices</h1>
+                <h2>Input logs</h2>
+                <p>Drag-and-drop or copy-and-paste your raw .csv data here</p>
+                <div className="row">
+                    <div className="col form-group">
+                        <label htmlFor="logsInput">Raw installation logs</label>
+                        <textarea
+                            className="form-control"
+                            id="logsInput"
+                            onChange={this.onLogsChange}
+                            defaultValue={this.state.data}
+                        />
+                    </div>
+                    <div className="col form-group">
+                        <label htmlFor="deviceInput">Available devices</label>
+                        <textarea
+                            className="form-control"
+                            id="deviceInput"
+                            onChange={this.onDevicesChange}
+                            defaultValue={this.state.devices}
+                        />
+                    </div>
+                </div>
+                <h2>Results</h2>
                 <table className="table">
                     <thead>
                         <tr>

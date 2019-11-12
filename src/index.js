@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import ReactDOM from 'react-dom'
+import { useDropzone } from 'react-dropzone'
 
 import { sampleLogs, sampleDeviceList } from './sample'
 
@@ -31,7 +32,7 @@ class App extends React.PureComponent {
 
         this.setState({
             ...newState,
-            data: evt.target.value.trim(),
+            data: (evt.target.value || '').trim(),
         })
     }
 
@@ -40,8 +41,78 @@ class App extends React.PureComponent {
 
         this.setState({
             ...newState,
-            devices: evt.target.value.trim(),
+            devices: (evt.target.value || '').trim(),
         })
+    }
+
+    DropLogs = () => {
+        const onDrop = useCallback(acceptedFiles => {
+            const reader = new FileReader()
+
+            reader.onabort = () => console.log('[DropLogs] file reading was aborted')
+            reader.onerror = () => console.log('[DropLogs] file reading has failed')
+            reader.onload = () => {
+                console.log('[DropLogs] read new file')
+                const newState = { ...this.state }
+
+                this.setState({
+                    ...newState,
+                    data: reader.result.trim(),
+                })
+            }
+
+            acceptedFiles.forEach(file => reader.readAsText(file))
+        }, [])
+        const { getRootProps /*, getInputProps, isDragActive*/ } = useDropzone({ onDrop })
+
+        return (
+            <div {...getRootProps()} className="col form-group">
+                {/*<input {...getInputProps()} />*/}
+                <label htmlFor="logsInput">Raw device logs (installs_com.example_YYYYMM_device.csv)</label>
+                <textarea
+                    className="form-control"
+                    id="logsInput"
+                    onChange={this.onLogsChange}
+                    defaultValue={this.state.data}
+                    value={this.state.data}
+                />
+            </div>
+        )
+    }
+
+    DropDevices = () => {
+        const onDrop = useCallback(acceptedFiles => {
+            const reader = new FileReader()
+
+            reader.onabort = () => console.log('[DropDevices] file reading was aborted')
+            reader.onerror = () => console.log('[DropDevices] file reading has failed')
+            reader.onload = () => {
+                console.log('[DropDevices] read new file')
+                const newState = { ...this.state }
+
+                this.setState({
+                    ...newState,
+                    devices: reader.result.trim(),
+                })
+            }
+
+            acceptedFiles.forEach(file => reader.readAsText(file))
+        }, [])
+        const { getRootProps /*, getInputProps, isDragActive*/ } = useDropzone({ onDrop })
+
+        return (
+            <div {...getRootProps()} className="col form-group">
+                {/*<input {...getInputProps()} />*/}
+                <label htmlFor="deviceInput">Available devices (supported_devices.csv)</label>
+                <textarea
+                    className="form-control"
+                    id="deviceInput"
+                    onChange={this.onDevicesChange}
+                    defaultValue={this.state.devices}
+                    value={this.state.devices}
+                />
+            </div>
+        )
     }
 
     getDeviceList = rawDeviceList => {
@@ -185,6 +256,7 @@ class App extends React.PureComponent {
             return 0
         })
 
+        console.log('returning ', { devices, total, groups })
         return { devices, total, groups }
     }
 
@@ -197,26 +269,13 @@ class App extends React.PureComponent {
                 <h1>Top Android Devices</h1>
                 <h2>Input logs</h2>
                 <p>Drag-and-drop or copy-and-paste your raw .csv data here</p>
-                <div className="row">
-                    <div className="col form-group">
-                        <label htmlFor="logsInput">Raw installation logs</label>
-                        <textarea
-                            className="form-control"
-                            id="logsInput"
-                            onChange={this.onLogsChange}
-                            defaultValue={this.state.data}
-                        />
-                    </div>
-                    <div className="col form-group">
-                        <label htmlFor="deviceInput">Available devices</label>
-                        <textarea
-                            className="form-control"
-                            id="deviceInput"
-                            onChange={this.onDevicesChange}
-                            defaultValue={this.state.devices}
-                        />
-                    </div>
-                </div>
+                <this.DropLogs>
+                    <p>Drag onto me?</p>
+                </this.DropLogs>
+                <this.DropDevices>
+                    <p>Drag onto me?</p>
+                </this.DropDevices>
+
                 <h2>Results</h2>
                 <table className="table">
                     <thead>
@@ -230,29 +289,31 @@ class App extends React.PureComponent {
                         </tr>
                     </thead>
                     <tbody>
-                        {groups.map((group, g) => {
-                            runningTotal += group.count
+                        {groups && groups.length > 0
+                            ? groups.map((group, g) => {
+                                  runningTotal += group.count
 
-                            return (
-                                <tr key={`${group.name}_${group.count}_${runningTotal}`}>
-                                    <td>{g + 1}</td>
-                                    <td>{group.brand}</td>
-                                    <td>
-                                        {getUniqueElements(
-                                            group.codes.map(model => ({
-                                                name: devices[model].name,
-                                                sortName: devices[model].sortName,
-                                            })),
-                                        )
-                                            .map(model => model.name)
-                                            .join(', ')}
-                                    </td>
-                                    <td>{group.count}</td>
-                                    <td>{runningTotal}</td>
-                                    <td>{parseInt((runningTotal / total) * 100, 10)}</td>
-                                </tr>
-                            )
-                        })}
+                                  return (
+                                      <tr key={`${group.name}_${group.count}_${runningTotal}`}>
+                                          <td>{g + 1}</td>
+                                          <td>{group.brand}</td>
+                                          <td>
+                                              {getUniqueElements(
+                                                  group.codes.map(model => ({
+                                                      name: devices[model].name,
+                                                      sortName: devices[model].sortName,
+                                                  })),
+                                              )
+                                                  .map(model => model.name)
+                                                  .join(', ')}
+                                          </td>
+                                          <td>{group.count}</td>
+                                          <td>{runningTotal}</td>
+                                          <td>{parseInt((runningTotal / total) * 100, 10)}</td>
+                                      </tr>
+                                  )
+                              })
+                            : null}
                     </tbody>
                 </table>
             </div>

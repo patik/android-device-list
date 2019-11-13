@@ -21,9 +21,10 @@ const getUniqueElements = arr => {
     return unique
 }
 
-const ResultsTable = ({ devices, total, groups }) => {
-    const hasData = Boolean(groups) && groups.length > 0
+const ResultsTable = ({ devices, total, groups = [] }) => {
+    const hasData = groups.length > 0
     let runningTotal = 0
+
     return (
         <React.Fragment>
             {hasData ? (

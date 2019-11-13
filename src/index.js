@@ -22,63 +22,76 @@ const getUniqueElements = arr => {
 }
 
 const ResultsTable = ({ devices, total, groups }) => {
+    const hasData = Boolean(groups) && groups.length > 0
     let runningTotal = 0
     return (
-        <table className="table table-hover table-sm table-striped table-dark">
-            <thead className="thead-dark">
-                <tr>
-                    <th scope="row">Rank</th>
-                    <th scope="row">Brand</th>
-                    <th scope="row">Major Model</th>
-                    <th scope="row">Installs</th>
-                    <th scope="row">Running total</th>
-                    <th scope="row" className="text-warning">
-                        Running %
-                        <abbr
-                            title="This represents the total percentage of installations comprised by that device and all the ones above it combined.
-In other words, if you scroll down to the row that shows 25 then all devices down through that row make up 25% of the total installs."
-                        >
-                            info
-                        </abbr>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {groups && groups.length > 0 ? (
-                    groups.map((group, g) => {
-                        runningTotal += group.count
-
-                        return (
-                            <tr key={`${group.name}_${group.count}_${runningTotal}`}>
-                                <th scope="row">{g + 1}</th>
-                                <td>{group.brand}</td>
-                                <td>
-                                    {getUniqueElements(
-                                        group.codes.map(model => ({
-                                            name: devices[model].name,
-                                            sortName: devices[model].sortName,
-                                        })),
-                                    )
-                                        .map(model => model.name)
-                                        .join(', ')}
-                                </td>
-                                <td>{group.count}</td>
-                                <td>{runningTotal}</td>
-                                <td className="text-warning font-weight-bold">
-                                    {parseInt((runningTotal / total) * 100, 10)}
-                                </td>
-                            </tr>
-                        )
-                    })
-                ) : (
+        <React.Fragment>
+            {hasData ? (
+                <p>
+                    The main thing to look at is the last column. This represents the total percentage of
+                    installations comprised by that device and all the ones above it combined. In other words, if you
+                    scroll down to the row that shows 25 then all devices down through that row make up 25% of the
+                    total installs.
+                </p>
+            ) : null}
+            <table className="table table-hover table-sm table-striped table-bordered table-dark">
+                <thead className="thead-dark">
                     <tr>
-                        <td colSpan="6" className="text-center">
-                            No data to display
-                        </td>
+                        <th scope="row" className="text-center">
+                            Rank
+                        </th>
+                        <th scope="row">Brand</th>
+                        <th scope="row">Major Model</th>
+                        <th scope="row" className="text-center">
+                            Installs
+                        </th>
+                        <th scope="row" className="text-center">
+                            Running total
+                        </th>
+                        <th scope="row" className="text-warning text-center">
+                            Running %
+                        </th>
                     </tr>
-                )}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {hasData ? (
+                        groups.map((group, g) => {
+                            runningTotal += group.count
+
+                            return (
+                                <tr key={`${group.name}_${group.count}_${runningTotal}`}>
+                                    <th scope="row" className="text-center">
+                                        {g + 1}
+                                    </th>
+                                    <td>{group.brand}</td>
+                                    <td>
+                                        {getUniqueElements(
+                                            group.codes.map(model => ({
+                                                name: devices[model].name,
+                                                sortName: devices[model].sortName,
+                                            })),
+                                        )
+                                            .map(model => model.name)
+                                            .join(', ')}
+                                    </td>
+                                    <td className="text-center">{group.count}</td>
+                                    <td className="text-center">{runningTotal}</td>
+                                    <td className="text-center text-warning font-weight-bold">
+                                        {parseInt((runningTotal / total) * 100, 10)}
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan="6" className="text-center">
+                                No data to display
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </React.Fragment>
     )
 }
 

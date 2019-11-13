@@ -21,6 +21,67 @@ const getUniqueElements = arr => {
     return unique
 }
 
+const ResultsTable = ({ devices, total, groups }) => {
+    let runningTotal = 0
+    return (
+        <table className="table table-hover table-sm table-striped table-dark">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="row">Rank</th>
+                    <th scope="row">Brand</th>
+                    <th scope="row">Major Model</th>
+                    <th scope="row">Installs</th>
+                    <th scope="row">Running total</th>
+                    <th scope="row" className="text-warning">
+                        Running %
+                        <abbr
+                            title="This represents the total percentage of installations comprised by that device and all the ones above it combined.
+In other words, if you scroll down to the row that shows 25 then all devices down through that row make up 25% of the total installs."
+                        >
+                            info
+                        </abbr>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {groups && groups.length > 0 ? (
+                    groups.map((group, g) => {
+                        runningTotal += group.count
+
+                        return (
+                            <tr key={`${group.name}_${group.count}_${runningTotal}`}>
+                                <th scope="row">{g + 1}</th>
+                                <td>{group.brand}</td>
+                                <td>
+                                    {getUniqueElements(
+                                        group.codes.map(model => ({
+                                            name: devices[model].name,
+                                            sortName: devices[model].sortName,
+                                        })),
+                                    )
+                                        .map(model => model.name)
+                                        .join(', ')}
+                                </td>
+                                <td>{group.count}</td>
+                                <td>{runningTotal}</td>
+                                <td className="text-warning font-weight-bold">
+                                    {parseInt((runningTotal / total) * 100, 10)}
+                                </td>
+                            </tr>
+                        )
+                    })
+                ) : (
+                    <tr>
+                        <td colSpan="6" className="text-center">
+                            No data to display
+                        </td>
+                    </tr>
+                )}
+            </tbody>
+        </table>
+    )
+}
+
 class App extends React.PureComponent {
     state = {
         data: window.location.href.includes('csb.app') ? sampleLogs : '',
@@ -66,7 +127,9 @@ class App extends React.PureComponent {
 
         return (
             <div {...{ ...getRootProps(), tabIndex: -1 }} className="col form-group">
-                <label htmlFor="logsInput">installs_com.example_YYYYMM_device.csv (installs by device)</label>
+                <label htmlFor="logsInput">
+                    installs_com.example_YYYYMM_<strong>device</strong>.csv (installs by device)
+                </label>
                 <textarea
                     className="form-control"
                     id="logsInput"
@@ -256,8 +319,7 @@ class App extends React.PureComponent {
     }
 
     render() {
-        let { devices, total, groups } = this.getResults(this.state.data, this.state.devices)
-        let runningTotal = 0
+        const { devices, total, groups } = this.getResults(this.state.data, this.state.devices)
 
         return (
             <div className="App">
@@ -280,61 +342,7 @@ class App extends React.PureComponent {
                 </div>
 
                 <h2>Results</h2>
-                <table className="table table-hover table-sm table-striped table-dark">
-                    <thead className="thead-dark">
-                        <tr>
-                            <th scope="row">Rank</th>
-                            <th scope="row">Brand</th>
-                            <th scope="row">Major Model</th>
-                            <th scope="row">Installs</th>
-                            <th scope="row">Running total</th>
-                            <th scope="row" className="text-warning">
-                                Running %
-                                <abbr
-                                    title="This represents the total percentage of installations comprised by that device and all the ones above it combined.
-In other words, if you scroll down to the row that shows 25 then all devices down through that row make up 25% of the total installs."
-                                >
-                                    info
-                                </abbr>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {groups && groups.length > 0 ? (
-                            groups.map((group, g) => {
-                                runningTotal += group.count
-
-                                return (
-                                    <tr key={`${group.name}_${group.count}_${runningTotal}`}>
-                                        <th scope="row">{g + 1}</th>
-                                        <td>{group.brand}</td>
-                                        <td>
-                                            {getUniqueElements(
-                                                group.codes.map(model => ({
-                                                    name: devices[model].name,
-                                                    sortName: devices[model].sortName,
-                                                })),
-                                            )
-                                                .map(model => model.name)
-                                                .join(', ')}
-                                        </td>
-                                        <td>{group.count}</td>
-                                        <td>{runningTotal}</td>
-                                        <td className="text-warning font-weight-bold">
-                                            {parseInt((runningTotal / total) * 100, 10)}
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        ) : (
-                            <tr>
-                                <td colSpan="6" className="text-center">
-                                    No data to display
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                <ResultsTable groups={groups} devices={devices} total={total} />
                 <p>
                     <a href="https://github.com/patik/android-device-list">GitHub repository</a>
                 </p>

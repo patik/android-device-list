@@ -23,8 +23,8 @@ const getUniqueElements = arr => {
 
 class App extends React.PureComponent {
     state = {
-        data: sampleLogs,
-        devices: sampleDeviceList,
+        data: window.location.href.includes('csb.app') ? sampleLogs : '',
+        devices: window.location.href.includes('csb.app') ? sampleDeviceList : '',
     }
 
     onLogsChange = evt => {
@@ -52,7 +52,6 @@ class App extends React.PureComponent {
             reader.onabort = () => console.log('[DropLogs] file reading was aborted')
             reader.onerror = () => console.log('[DropLogs] file reading has failed')
             reader.onload = () => {
-                console.log('[DropLogs] read new file')
                 const newState = { ...this.state }
 
                 this.setState({
@@ -63,18 +62,17 @@ class App extends React.PureComponent {
 
             acceptedFiles.forEach(file => reader.readAsText(file))
         }, [])
-        const { getRootProps /*, getInputProps, isDragActive*/ } = useDropzone({ onDrop })
+        const { getRootProps } = useDropzone({ onDrop })
 
         return (
-            <div {...getRootProps()} className="col form-group">
-                {/*<input {...getInputProps()} />*/}
+            <div {...{ ...getRootProps(), tabIndex: -1 }} className="col form-group">
                 <label htmlFor="logsInput">Raw device logs (installs_com.example_YYYYMM_device.csv)</label>
                 <textarea
                     className="form-control"
                     id="logsInput"
                     onChange={this.onLogsChange}
-                    defaultValue={this.state.data}
                     value={this.state.data}
+                    placeholder="Drag installs_com.example_YYYYMM_device.csv here"
                 />
             </div>
         )
@@ -87,7 +85,6 @@ class App extends React.PureComponent {
             reader.onabort = () => console.log('[DropDevices] file reading was aborted')
             reader.onerror = () => console.log('[DropDevices] file reading has failed')
             reader.onload = () => {
-                console.log('[DropDevices] read new file')
                 const newState = { ...this.state }
 
                 this.setState({
@@ -98,18 +95,17 @@ class App extends React.PureComponent {
 
             acceptedFiles.forEach(file => reader.readAsText(file))
         }, [])
-        const { getRootProps /*, getInputProps, isDragActive*/ } = useDropzone({ onDrop })
+        const { getRootProps } = useDropzone({ onDrop })
 
         return (
-            <div {...getRootProps()} className="col form-group">
-                {/*<input {...getInputProps()} />*/}
+            <div {...{ ...getRootProps(), tabIndex: -1 }} className="col form-group">
                 <label htmlFor="deviceInput">Available devices (supported_devices.csv)</label>
                 <textarea
                     className="form-control"
                     id="deviceInput"
                     onChange={this.onDevicesChange}
-                    defaultValue={this.state.devices}
                     value={this.state.devices}
+                    placeholder="Drag supported_devices.csv here"
                 />
             </div>
         )
@@ -256,7 +252,6 @@ class App extends React.PureComponent {
             return 0
         })
 
-        console.log('returning ', { devices, total, groups })
         return { devices, total, groups }
     }
 
@@ -277,43 +272,53 @@ class App extends React.PureComponent {
                 </this.DropDevices>
 
                 <h2>Results</h2>
-                <table className="table">
-                    <thead>
+                <table className="table table-hover table-sm table-striped table-dark">
+                    <thead className="thead-dark">
                         <tr>
-                            <th>Rank</th>
-                            <th>Brand</th>
-                            <th>Major Model</th>
-                            <th>Installs</th>
-                            <th>Running total</th>
-                            <th>Running %</th>
+                            <th scope="row">Rank</th>
+                            <th scope="row">Brand</th>
+                            <th scope="row">Major Model</th>
+                            <th scope="row">Installs</th>
+                            <th scope="row">Running total</th>
+                            <th scope="row" className="text-warning">
+                                Running %
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {groups && groups.length > 0
-                            ? groups.map((group, g) => {
-                                  runningTotal += group.count
+                        {groups && groups.length > 0 ? (
+                            groups.map((group, g) => {
+                                runningTotal += group.count
 
-                                  return (
-                                      <tr key={`${group.name}_${group.count}_${runningTotal}`}>
-                                          <td>{g + 1}</td>
-                                          <td>{group.brand}</td>
-                                          <td>
-                                              {getUniqueElements(
-                                                  group.codes.map(model => ({
-                                                      name: devices[model].name,
-                                                      sortName: devices[model].sortName,
-                                                  })),
-                                              )
-                                                  .map(model => model.name)
-                                                  .join(', ')}
-                                          </td>
-                                          <td>{group.count}</td>
-                                          <td>{runningTotal}</td>
-                                          <td>{parseInt((runningTotal / total) * 100, 10)}</td>
-                                      </tr>
-                                  )
-                              })
-                            : null}
+                                return (
+                                    <tr key={`${group.name}_${group.count}_${runningTotal}`}>
+                                        <th scope="row">{g + 1}</th>
+                                        <td>{group.brand}</td>
+                                        <td>
+                                            {getUniqueElements(
+                                                group.codes.map(model => ({
+                                                    name: devices[model].name,
+                                                    sortName: devices[model].sortName,
+                                                })),
+                                            )
+                                                .map(model => model.name)
+                                                .join(', ')}
+                                        </td>
+                                        <td>{group.count}</td>
+                                        <td>{runningTotal}</td>
+                                        <td className="text-warning font-weight-bold">
+                                            {parseInt((runningTotal / total) * 100, 10)}
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        ) : (
+                            <tr>
+                                <td colSpan="6" className="text-center">
+                                    No data to display
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

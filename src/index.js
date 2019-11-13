@@ -66,7 +66,7 @@ class App extends React.PureComponent {
 
         return (
             <div {...{ ...getRootProps(), tabIndex: -1 }} className="col form-group">
-                <label htmlFor="logsInput">Raw device logs (installs_com.example_YYYYMM_device.csv)</label>
+                <label htmlFor="logsInput">installs_com.example_YYYYMM_device.csv (installs by device)</label>
                 <textarea
                     className="form-control"
                     id="logsInput"
@@ -99,7 +99,7 @@ class App extends React.PureComponent {
 
         return (
             <div {...{ ...getRootProps(), tabIndex: -1 }} className="col form-group">
-                <label htmlFor="deviceInput">Available devices (supported_devices.csv)</label>
+                <label htmlFor="deviceInput">supported_devices.csv (list of all possible devices)</label>
                 <textarea
                     className="form-control"
                     id="deviceInput"
@@ -263,13 +263,21 @@ class App extends React.PureComponent {
             <div className="App">
                 <h1>Top Android Devices</h1>
                 <h2>Input logs</h2>
-                <p>Drag-and-drop or copy-and-paste your raw .csv data here</p>
-                <this.DropLogs>
-                    <p>Drag onto me?</p>
-                </this.DropLogs>
-                <this.DropDevices>
-                    <p>Drag onto me?</p>
-                </this.DropDevices>
+                <div className="row">
+                    <div className="col">
+                        <p>Drag-and-drop or copy-and-paste your raw .csv data here</p>
+                    </div>
+                </div>
+                <div className="row">
+                    <this.DropLogs>
+                        <p>Drag onto me?</p>
+                    </this.DropLogs>
+                </div>
+                <div className="row">
+                    <this.DropDevices>
+                        <p>Drag onto me?</p>
+                    </this.DropDevices>
+                </div>
 
                 <h2>Results</h2>
                 <table className="table table-hover table-sm table-striped table-dark">
@@ -282,6 +290,12 @@ class App extends React.PureComponent {
                             <th scope="row">Running total</th>
                             <th scope="row" className="text-warning">
                                 Running %
+                                <abbr
+                                    title="This represents the total percentage of installations comprised by that device and all the ones above it combined.
+In other words, if you scroll down to the row that shows 25 then all devices down through that row make up 25% of the total installs."
+                                >
+                                    info
+                                </abbr>
                             </th>
                         </tr>
                     </thead>

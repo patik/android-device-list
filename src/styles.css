@@ -1,6 +1,5 @@
 .App {
     font-family: sans-serif;
-    /* text-align: center; */
     margin: 1em;
 }
 
@@ -8,4 +7,15 @@ textarea {
     width: 50vw;
     height: 100px;
     margin-bottom: 3em;
+}
+
+th {
+    abbr {
+        font-size: smaller;
+        color: white;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        font-weight: normal;
+        vertical-align: middle;
+    }
 }

@@ -321,6 +321,9 @@ class App extends React.PureComponent {
                         )}
                     </tbody>
                 </table>
+                <p>
+                    <a href="https://github.com/patik/android-device-list">GitHub repository</a>
+                </p>
             </div>
         )
     }

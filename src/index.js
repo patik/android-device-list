@@ -21,14 +21,6 @@ const getUniqueElements = arr => {
     return unique
 }
 
-const numberWithCommas = n => {
-    const parts = n.toString().split('.')
-
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-
-    return parts.join('.')
-}
-
 const ResultsTable = ({ devices, total, groups = [] }) => {
     const hasData = groups.length > 0
     let runningTotal = 0
@@ -83,8 +75,8 @@ const ResultsTable = ({ devices, total, groups = [] }) => {
                                             .map(model => model.name)
                                             .join(', ')}
                                     </td>
-                                    <td className="text-center">{numberWithCommas(group.count)}</td>
-                                    <td className="text-center">{numberWithCommas(runningTotal)}</td>
+                                    <td className="text-center">{group.count.toLocaleString()}</td>
+                                    <td className="text-center">{runningTotal.toLocaleString()}</td>
                                     <td className="text-center text-warning font-weight-bold">
                                         {parseInt((runningTotal / total) * 100, 10)}
                                     </td>

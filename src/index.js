@@ -44,10 +44,10 @@ const ResultsTable = ({ devices, total, groups = [] }) => {
                         <th scope="row">Brand</th>
                         <th scope="row">Major Model</th>
                         <th scope="row" className="text-center">
-                            Installs
+                            This month's installations
                         </th>
                         <th scope="row" className="text-center">
-                            Running total of installations
+                            Running total of this month's installations
                         </th>
                         <th scope="row" className="text-warning text-center">
                             Running % of install base
@@ -262,7 +262,7 @@ class App extends React.PureComponent {
         data.split('\n').forEach(entry => {
             const parts = entry.split(',')
             const code = parts[2]
-            const installs = parts[9]
+            const installs = parts[10]
 
             // Ignore header row in CSV
             if (isNaN(installs)) {
